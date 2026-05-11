@@ -8,7 +8,7 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-public class NotesLogin {
+public class FilterNotesPage {
 
     private WebDriver driver;
     private WebDriverWait wait;
@@ -29,23 +29,12 @@ public class NotesLogin {
     private final By loginButton =
             By.xpath("//button[@type='submit']");
 
-    private final By notesCreationButton =
-            By.xpath("//button[@data-testid='add-new-note']");
+    private final By notesDeleteButton =
+            By.xpath("//button[@data-testid='note-delete']");
 
-    private final By categoryDropdown =
-            By.id("category");
 
-    private final By status =
-            By.id("completed");
-
-    private final By titleField =
-            By.id("title");
-
-    private final By descriptionField =
-            By.id("description");
-
-    private final By createButton =
-            By.xpath("//button[contains(text(),'Create')]");
+    private final By deleteButton =
+            By.xpath("//button[@data-testid='note-delete-confirm']");
 
     private final By title =
             By.xpath("(//div[@data-testid='note-card-title'])[1]");
@@ -53,19 +42,24 @@ public class NotesLogin {
     private final By description =
             By.xpath("(//p[@data-testid='note-card-description'])[1]");
 
-    public NotesLogin(WebDriver driver,
-                      WebDriverWait wait,
-                      JavascriptExecutor js) {
+    private final By displayedCategories =
+            By.xpath("//span[@data-testid='note-card-category']");
+
+    private final By notesCards =
+            By.xpath("//div[@data-testid='note-card']");
+
+    public FilterNotesPage(WebDriver driver,
+                           WebDriverWait wait,
+                           JavascriptExecutor js) {
 
         this.driver = driver;
         this.wait = wait;
         this.js = js;
     }
 
-    public String NoteLoginUser(String email,
-                                String password,
-                                String noteTitle,
-                                String noteDescription) {
+    public boolean NoteLoginUser(String email,
+                                 String password,
+                                 String category) {
 
         noteLogin();
 
@@ -75,9 +69,9 @@ public class NotesLogin {
 
         loginBtn();
 
-        notesCreate(noteTitle, noteDescription);
+        notesCategory(category);
 
-        return notesVerify();
+        return notesVerify(category);
     }
 
     public void noteLogin() {
@@ -153,70 +147,33 @@ public class NotesLogin {
         );
     }
 
-    public void notesCreate(String noteTitle,
-                            String noteDescription) {
+    public void notesCategory(String category) {
 
-        WebElement addNote =
+        By categoryButton =
+                By.xpath(
+                        "//button[@data-testid='category-"
+                                + category.toLowerCase()
+                                + "']"
+                );
+
+        WebElement categoryElement =
                 wait.until(
                         ExpectedConditions.elementToBeClickable(
-                                notesCreationButton
+                                categoryButton
                         )
                 );
 
         js.executeScript(
                 "arguments[0].scrollIntoView({block:'center'});",
-                addNote
+                categoryElement
         );
 
         js.executeScript(
                 "arguments[0].click();",
-                addNote
-        );
-
-        WebElement dropdownElement =
-                wait.until(
-                        ExpectedConditions.visibilityOfElementLocated(
-                                categoryDropdown
-                        )
-                );
-
-        Select dropdown =
-                new Select(dropdownElement);
-
-        dropdown.selectByVisibleText("Personal");
-
-        driver.findElement(status).click();
-
-        driver.findElement(titleField)
-                .sendKeys(noteTitle);
-
-        driver.findElement(descriptionField)
-                .sendKeys(noteDescription);
-
-        WebElement create =
-                wait.until(
-                        ExpectedConditions.elementToBeClickable(
-                                createButton
-                        )
-                );
-
-        js.executeScript(
-                "arguments[0].scrollIntoView({block:'center'});",
-                create
-        );
-
-        js.executeScript(
-                "arguments[0].click();",
-                create
+                categoryElement
         );
 
         closeAdIfPresent();
-
-        wait.until(
-                ExpectedConditions.visibilityOfElementLocated(
-                        title
-                )
-        );
     }
 
     public void closeAdIfPresent() {
@@ -241,41 +198,35 @@ public class NotesLogin {
         }
     }
 
-    public String notesVerify() {
+    public boolean notesVerify(String expectedCategory) {
 
         closeAdIfPresent();
 
-        WebElement noteTitle =
+        By activeCategory =
+                By.xpath(
+                        "//button[@data-testid='category-"
+                                + expectedCategory.toLowerCase()
+                                + "']"
+                                + "[contains(@class,'btnx-success')]"
+                );
+
+        WebElement activeButton =
                 wait.until(
                         ExpectedConditions.visibilityOfElementLocated(
-                                title
+                                activeCategory
                         )
                 );
 
-        js.executeScript(
-                "arguments[0].scrollIntoView({block:'center'});",
-                noteTitle
-        );
-
-        return noteTitle.getText().trim();
-    }
-
-    public String notesDescription() {
-
-        closeAdIfPresent();
-
-        WebElement noteDescription =
-                wait.until(
-                        ExpectedConditions.visibilityOfElementLocated(
-                                description
-                        )
+        java.util.List<WebElement> visibleNotes =
+                driver.findElements(
+                        By.xpath("//div[@data-testid='note-card']")
                 );
 
-        js.executeScript(
-                "arguments[0].scrollIntoView({block:'center'});",
-                noteDescription
+        System.out.println(
+                "Visible Notes Count : " + visibleNotes.size()
         );
 
-        return noteDescription.getText().trim();
+        return activeButton.isDisplayed()
+                && visibleNotes.size() > 0;
     }
 }

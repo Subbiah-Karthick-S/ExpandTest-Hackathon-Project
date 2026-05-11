@@ -8,7 +8,7 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-public class NotesLogin {
+public class NotesEditPage {
 
     private WebDriver driver;
     private WebDriverWait wait;
@@ -29,8 +29,8 @@ public class NotesLogin {
     private final By loginButton =
             By.xpath("//button[@type='submit']");
 
-    private final By notesCreationButton =
-            By.xpath("//button[@data-testid='add-new-note']");
+    private final By notesEditButton =
+            By.xpath("//button[@data-testid='note-edit']");
 
     private final By categoryDropdown =
             By.id("category");
@@ -44,8 +44,8 @@ public class NotesLogin {
     private final By descriptionField =
             By.id("description");
 
-    private final By createButton =
-            By.xpath("//button[contains(text(),'Create')]");
+    private final By saveButton =
+            By.xpath("//button[@data-testid='note-submit']");
 
     private final By title =
             By.xpath("(//div[@data-testid='note-card-title'])[1]");
@@ -53,7 +53,7 @@ public class NotesLogin {
     private final By description =
             By.xpath("(//p[@data-testid='note-card-description'])[1]");
 
-    public NotesLogin(WebDriver driver,
+    public NotesEditPage(WebDriver driver,
                       WebDriverWait wait,
                       JavascriptExecutor js) {
 
@@ -64,8 +64,8 @@ public class NotesLogin {
 
     public String NoteLoginUser(String email,
                                 String password,
-                                String noteTitle,
-                                String noteDescription) {
+                                String modifiedTitle,
+                                String modifiedDescription) {
 
         noteLogin();
 
@@ -75,7 +75,7 @@ public class NotesLogin {
 
         loginBtn();
 
-        notesCreate(noteTitle, noteDescription);
+        notesEdit(modifiedTitle, modifiedDescription);
 
         return notesVerify();
     }
@@ -153,68 +153,67 @@ public class NotesLogin {
         );
     }
 
-    public void notesCreate(String noteTitle,
-                            String noteDescription) {
+    public void notesEdit(String modifiedTitle,
+                          String modifiedDescription) {
 
-        WebElement addNote =
+        WebElement editNote =
                 wait.until(
                         ExpectedConditions.elementToBeClickable(
-                                notesCreationButton
+                                notesEditButton
                         )
                 );
 
         js.executeScript(
                 "arguments[0].scrollIntoView({block:'center'});",
-                addNote
+                editNote
         );
 
         js.executeScript(
                 "arguments[0].click();",
-                addNote
+                editNote
         );
 
-        WebElement dropdownElement =
+        WebElement titleInput =
                 wait.until(
                         ExpectedConditions.visibilityOfElementLocated(
-                                categoryDropdown
+                                titleField
                         )
                 );
 
-        Select dropdown =
-                new Select(dropdownElement);
+        titleInput.clear();
 
-        dropdown.selectByVisibleText("Personal");
+        titleInput.sendKeys(modifiedTitle);
 
-        driver.findElement(status).click();
+        WebElement descriptionInput =
+                driver.findElement(descriptionField);
 
-        driver.findElement(titleField)
-                .sendKeys(noteTitle);
+        descriptionInput.clear();
 
-        driver.findElement(descriptionField)
-                .sendKeys(noteDescription);
+        descriptionInput.sendKeys(modifiedDescription);
 
-        WebElement create =
+        WebElement save =
                 wait.until(
                         ExpectedConditions.elementToBeClickable(
-                                createButton
+                                saveButton
                         )
                 );
 
         js.executeScript(
                 "arguments[0].scrollIntoView({block:'center'});",
-                create
+                save
         );
 
         js.executeScript(
                 "arguments[0].click();",
-                create
+                save
         );
 
         closeAdIfPresent();
 
         wait.until(
-                ExpectedConditions.visibilityOfElementLocated(
-                        title
+                ExpectedConditions.textToBePresentInElementLocated(
+                        title,
+                        modifiedTitle
                 )
         );
     }

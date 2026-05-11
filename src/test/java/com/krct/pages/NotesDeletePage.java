@@ -8,7 +8,7 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-public class NotesLogin {
+public class NotesDeletePage {
 
     private WebDriver driver;
     private WebDriverWait wait;
@@ -29,23 +29,12 @@ public class NotesLogin {
     private final By loginButton =
             By.xpath("//button[@type='submit']");
 
-    private final By notesCreationButton =
-            By.xpath("//button[@data-testid='add-new-note']");
+    private final By notesDeleteButton =
+            By.xpath("//button[@data-testid='note-delete']");
 
-    private final By categoryDropdown =
-            By.id("category");
 
-    private final By status =
-            By.id("completed");
-
-    private final By titleField =
-            By.id("title");
-
-    private final By descriptionField =
-            By.id("description");
-
-    private final By createButton =
-            By.xpath("//button[contains(text(),'Create')]");
+    private final By deleteButton =
+            By.xpath("//button[@data-testid='note-delete-confirm']");
 
     private final By title =
             By.xpath("(//div[@data-testid='note-card-title'])[1]");
@@ -53,19 +42,18 @@ public class NotesLogin {
     private final By description =
             By.xpath("(//p[@data-testid='note-card-description'])[1]");
 
-    public NotesLogin(WebDriver driver,
-                      WebDriverWait wait,
-                      JavascriptExecutor js) {
+    public NotesDeletePage(WebDriver driver,
+                         WebDriverWait wait,
+                         JavascriptExecutor js) {
 
         this.driver = driver;
         this.wait = wait;
         this.js = js;
     }
 
-    public String NoteLoginUser(String email,
-                                String password,
-                                String noteTitle,
-                                String noteDescription) {
+    public boolean NoteLoginUser(String email,
+                                 String password,
+                                 String deletedTitle) {
 
         noteLogin();
 
@@ -75,9 +63,9 @@ public class NotesLogin {
 
         loginBtn();
 
-        notesCreate(noteTitle, noteDescription);
+        notesDelete();
 
-        return notesVerify();
+        return notesVerify(deletedTitle);
     }
 
     public void noteLogin() {
@@ -153,67 +141,47 @@ public class NotesLogin {
         );
     }
 
-    public void notesCreate(String noteTitle,
-                            String noteDescription) {
+    public void notesDelete() {
 
-        WebElement addNote =
+        WebElement deleteNote =
                 wait.until(
                         ExpectedConditions.elementToBeClickable(
-                                notesCreationButton
+                                notesDeleteButton
                         )
                 );
 
         js.executeScript(
                 "arguments[0].scrollIntoView({block:'center'});",
-                addNote
+                deleteNote
         );
 
         js.executeScript(
                 "arguments[0].click();",
-                addNote
+                deleteNote
         );
 
-        WebElement dropdownElement =
-                wait.until(
-                        ExpectedConditions.visibilityOfElementLocated(
-                                categoryDropdown
-                        )
-                );
 
-        Select dropdown =
-                new Select(dropdownElement);
-
-        dropdown.selectByVisibleText("Personal");
-
-        driver.findElement(status).click();
-
-        driver.findElement(titleField)
-                .sendKeys(noteTitle);
-
-        driver.findElement(descriptionField)
-                .sendKeys(noteDescription);
-
-        WebElement create =
+        WebElement delete =
                 wait.until(
                         ExpectedConditions.elementToBeClickable(
-                                createButton
+                                deleteButton
                         )
                 );
 
         js.executeScript(
                 "arguments[0].scrollIntoView({block:'center'});",
-                create
+                delete
         );
 
         js.executeScript(
                 "arguments[0].click();",
-                create
+                delete
         );
 
         closeAdIfPresent();
 
         wait.until(
-                ExpectedConditions.visibilityOfElementLocated(
+                ExpectedConditions.invisibilityOfElementLocated(
                         title
                 )
         );
@@ -241,41 +209,17 @@ public class NotesLogin {
         }
     }
 
-    public String notesVerify() {
+    public boolean notesVerify(String deletedTitle) {
 
         closeAdIfPresent();
 
-        WebElement noteTitle =
-                wait.until(
-                        ExpectedConditions.visibilityOfElementLocated(
-                                title
-                        )
+        By deletedNote =
+                By.xpath(
+                        "//div[@data-testid='note-card-title' and contains(text(),'"
+                                + deletedTitle +
+                                "')]"
                 );
 
-        js.executeScript(
-                "arguments[0].scrollIntoView({block:'center'});",
-                noteTitle
-        );
-
-        return noteTitle.getText().trim();
-    }
-
-    public String notesDescription() {
-
-        closeAdIfPresent();
-
-        WebElement noteDescription =
-                wait.until(
-                        ExpectedConditions.visibilityOfElementLocated(
-                                description
-                        )
-                );
-
-        js.executeScript(
-                "arguments[0].scrollIntoView({block:'center'});",
-                noteDescription
-        );
-
-        return noteDescription.getText().trim();
+        return driver.findElements(deletedNote).isEmpty();
     }
 }

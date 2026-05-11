@@ -1,77 +1,240 @@
 package com.krct;
 
-import com.krct.pages.LoginPage;
-import com.krct.pages.LogoutPage;
-import com.krct.pages.NotesLogin;
-import com.krct.pages.RegisterPage;
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.ui.ExpectedConditions;
+import com.krct.pages.*;
 import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
-public class ExpandTest extends BaseTest{
-    @DataProvider
-    public Object[][] registerData(){
-        Object[][] testData = new Object[][]{
-                {"subbiahkarthicksaravanan","123456","123456"},
-        };
-        return testData;
-    }
+public class ExpandTest extends BaseTest {
 
     @DataProvider
-    public Object[][] userData(){
-        Object[][] testData = new Object[][]{
-                {"subbiahkarthicksaravanan","123456","You logged into a secure area!"},
-                {"subbiahkarthicksaravanan","123456789","Your password is invalid!"},
-                {"","","Your username is invalid!"}
+    public Object[][] userData() {
+
+        return new Object[][]{
+                {"practice", "SuperSecretPassword!", "You logged into a secure area!"},
+                {"practice", "SecretPassword!", "Your password is invalid!"},
+                {"", "", "Your username is invalid!"}
         };
-        return testData;
     }
 
     @DataProvider
-    public Object[][] logOutData(){
-        Object[][] testData = new Object[][]{
-                {"subbiahkarthicksaravanan","123456"},
+    public Object[][] logOutData() {
+
+        return new Object[][]{
+                {"practice", "SuperSecretPassword!"}
         };
-        return testData;
     }
 
-    @Test(priority=1,dataProvider="registerData")
-    public void RegisterUserTest(String username,String password,String confirmPassword){
-        RegisterPage registerPage = new RegisterPage(driver,wait,js);
+    @DataProvider
+    public Object[][] notesData() {
+
+        return new Object[][]{
+                {
+                        "subbiahkarthickcse@gmail.com",
+                        "123456",
+                        "Subbiah Karthick",
+                        "Subbiah Karthick from HCLTech"
+                }
+        };
+    }
+
+    @DataProvider
+    public Object[][] notesEditData() {
+
+        return new Object[][]{
+                {
+                        "subbiahkarthickcse@gmail.com",
+                        "123456",
+                        "Subbiah Karthick Saravanan",
+                        "Subbiah Karthick Saravanan is an Employee from HCLTech"
+                }
+        };
+    }
+
+    @DataProvider
+    public Object[][] notesDeleteData() {
+
+        return new Object[][]{
+                {
+                        "subbiahkarthickcse@gmail.com",
+                        "123456",
+                        "Subbiah Karthick Saravanan"
+                }
+        };
+    }
+
+    @DataProvider
+    public Object[][] categoryData() {
+
+        return new Object[][]{
+                {
+                        "subbiahkarthickcse@gmail.com",
+                        "123456",
+                        "Personal"
+                }
+        };
+    }
+
+    @Test(priority = 1, dataProvider = "userData")
+    public void LoginTest(String username,
+                          String password,
+                          String flash) {
+
+        LoginPage loginPage =
+                new LoginPage(driver, wait, js);
+
         navigateTo();
+
         adBlockers();
-        String txt = registerPage.registerUser(username,password,confirmPassword);
-        Assert.assertEquals(txt,"Successfully registered, you can log in now.");
+
+        String txt =
+                loginPage.LoginUser(username, password);
+
+        Assert.assertEquals(txt, flash);
     }
 
-    @Test(priority=2,dataProvider="userData")
-    public void LoginTest(String username,String password,String flash){
-        LoginPage loginPage = new LoginPage(driver,wait,js);
+    @Test(priority = 2, dataProvider = "logOutData")
+    public void logoutTest(String username,
+                           String password) {
+
+        LogoutPage logoutPage =
+                new LogoutPage(driver, wait, js);
+
         navigateTo();
+
         adBlockers();
-        String txt = loginPage.LoginUser(username,password);
-        Assert.assertEquals(txt,flash);
+
+        String txt =
+                logoutPage.logoutUser(username, password);
+
+        Assert.assertEquals(
+                txt,
+                "You logged out of the secure area!"
+        );
+
+        Assert.assertEquals(
+                driver.getCurrentUrl(),
+                "https://practice.expandtesting.com/login"
+        );
     }
 
-    @Test(priority=3,dataProvider="logOutData")
-    public void logoutTest(String username,String password){
-        LogoutPage logoutPage = new LogoutPage(driver,wait,js);
+    @Test(priority = 3, dataProvider = "notesData")
+    public void NotesLoginTest(String email,
+                               String password,
+                               String expectedTitle,
+                               String expectedDescription) {
+
+        NotesLogin notesLoginPage =
+                new NotesLogin(driver, wait, js);
+
         navigateTo();
+
         adBlockers();
-        String txt = logoutPage.logoutUser(username,password);
-        Assert.assertEquals(txt,"You logged out of the secure area!");
-        Assert.assertEquals(driver.getCurrentUrl(),"https://practice.expandtesting.com/login");
+
+        String actualTitle =
+                notesLoginPage.NoteLoginUser(
+                        email,
+                        password,
+                        expectedTitle,
+                        expectedDescription
+                );
+
+        Assert.assertEquals(
+                actualTitle,
+                expectedTitle
+        );
+
+        String actualDescription =
+                notesLoginPage.notesDescription();
+
+        Assert.assertEquals(
+                actualDescription,
+                expectedDescription
+        );
     }
 
-    @Test(priority=4)
-    public void NotesLoginTest(){
-            NotesLogin notesLoginPage = new NotesLogin(driver,wait,js);
-            navigateTo();
-            adBlockers();
-            String txt = notesLoginPage.NoteLoginUser("subbiahkarthickcse@gmail.com","123456");
-            Assert.assertEquals(txt,"Logout");
+    @Test(priority = 4, dataProvider = "notesEditData")
+    public void NotesEditTest(String email,
+                               String password,
+                               String modifiedTitle,
+                               String modifiedDescription) {
+
+        NotesEditPage notesEditPage =
+                new NotesEditPage(driver, wait, js);
+
+        navigateTo();
+
+        adBlockers();
+
+        String actualTitle =
+                notesEditPage.NoteLoginUser(
+                        email,
+                        password,
+                        modifiedTitle,
+                        modifiedDescription
+                );
+
+        Assert.assertEquals(
+                actualTitle,
+                modifiedTitle
+        );
+
+        String actualDescription =
+                notesEditPage.notesDescription();
+
+        Assert.assertEquals(
+                actualDescription,
+                modifiedDescription
+        );
+    }
+
+    @Test(priority = 5, dataProvider = "notesDeleteData")
+    public void NotesDeleteTest(String email,
+                                String password,
+                                String deletedTitle) {
+
+        NotesDeletePage notesDeletePage =
+                new NotesDeletePage(driver, wait, js);
+
+        navigateTo();
+
+        adBlockers();
+
+        boolean isDeleted =
+                notesDeletePage.NoteLoginUser(
+                        email,
+                        password,
+                        deletedTitle
+                );
+
+        Assert.assertTrue(
+                isDeleted,
+                "Note was not deleted successfully"
+        );
+    }
+
+    @Test(priority = 6, dataProvider = "categoryData")
+    public void NotesFilterTest(String email,
+                                String password,
+                                String category) {
+
+        FilterNotesPage notesFilterPage =
+                new FilterNotesPage(driver, wait, js);
+
+        navigateTo();
+
+        adBlockers();
+
+        boolean categoryVerified =
+                notesFilterPage.NoteLoginUser(
+                        email,
+                        password,
+                        category
+                );
+
+        Assert.assertTrue(
+                categoryVerified,
+                "Filtered notes do not belong to category: " + category
+        );
     }
 }

@@ -1,6 +1,5 @@
 package com.krct;
 
-import com.krct.pages.ConfigReader;
 import io.github.bonigarcia.wdm.WebDriverManager;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
@@ -11,7 +10,7 @@ import org.testng.annotations.BeforeMethod;
 
 import java.time.Duration;
 
-public class BaseTest {
+public class BaseTest{
     protected WebDriver driver;
     protected WebDriverWait wait;
     protected JavascriptExecutor js;
@@ -22,10 +21,14 @@ public class BaseTest {
     public void setUp(){
         //driverManager.ChromeDriver.setup();
         driver = new ChromeDriver();
-        wait = new WebDriverWait(driver, Duration.ofSeconds(20));
         js = (JavascriptExecutor) driver;
 
-        System.out.println(config.getBaseUrl());
+        wait = new WebDriverWait(
+                driver,
+                Duration.ofSeconds(20)
+        );
+
+        //System.out.println(config.getBaseUrl());
 
 
     }
@@ -34,6 +37,7 @@ public class BaseTest {
         //driver.get("https://practice.expandtesting.com/");
 
         driver.get(config.getBaseUrl());
+
     }
 
     public void adBlockers(){

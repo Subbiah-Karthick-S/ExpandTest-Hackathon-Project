@@ -1,4 +1,4 @@
-package com.krct.pages;
+package com.krct;
 
 import java.io.FileInputStream;
 import java.util.Properties;
@@ -16,25 +16,29 @@ public class ConfigReader {
             FileInputStream fis =
                     new FileInputStream(
                             System.getProperty("user.dir")
-                                    + "src/test/java/com/krct/config.properties");
+                                    + "/src/test/resources/config.properties"
+                    );
 
             prop.load(fis);
 
         } catch (Exception e) {
 
             e.printStackTrace();
+
+            throw new RuntimeException("Failed to load config.properties");
         }
     }
 
     public String getBaseUrl() {
+
         String url = prop.getProperty("baseUrl");
 
+        if (url == null || url.trim().isEmpty()) {
 
-        if(url == null || url.trim().isEmpty()) {
-            throw new RuntimeException("baseUrl is NOT found in config.properties! " +
-                    "Checked file at: src/test/java/com/krct/pages/config.properties");
+            throw new RuntimeException(
+                    "baseUrl NOT found in config.properties"
+            );
         }
-
 
         return url;
     }
@@ -48,7 +52,7 @@ public class ConfigReader {
 
         String value = prop.getProperty("timeout");
 
-        if(value == null) {
+        if (value == null) {
 
             return 10;
         }
