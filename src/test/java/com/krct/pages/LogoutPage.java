@@ -35,38 +35,15 @@ public class LogoutPage {
 
     public void login() {
 
-        closeAdIfPresent();
-
         WebElement loginElement =
-                wait.until(
-                        ExpectedConditions.elementToBeClickable(
-                                loginButton
-                        )
-                );
+                wait.until(ExpectedConditions.visibilityOfElementLocated(logButton));
 
         js.executeScript(
-                "arguments[0].scrollIntoView({block:'center'});",
+                "arguments[0].scrollIntoView({block: 'center'});",
                 loginElement
         );
 
-        js.executeScript(
-                "arguments[0].click();",
-                loginElement
-        );
-    }
-
-    public void closeAdIfPresent() {
-
-        try {
-
-            js.executeScript(
-                    "document.querySelectorAll('iframe').forEach(el => el.remove());"
-            );
-
-        } catch (Exception e) {
-
-            System.out.println("No Ad Popup Found");
-        }
+        loginElement.click();
     }
 
     public void fillDetails(String username,

@@ -8,8 +8,6 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-import java.util.List;
-
 public class NotesDeletePage {
 
     private WebDriver driver;
@@ -65,7 +63,7 @@ public class NotesDeletePage {
 
         loginBtn();
 
-        notesDelete(deletedTitle);
+        notesDelete();
 
         return notesVerify(deletedTitle);
     }
@@ -143,44 +141,27 @@ public class NotesDeletePage {
         );
     }
 
-    public void notesDelete(String deletedTitle) {
+    public void notesDelete() {
 
-        closeAdIfPresent();
-
-        List<WebElement> notes =
-                driver.findElements(
-                        By.xpath("//div[@data-testid='note-card']")
+        WebElement deleteNote =
+                wait.until(
+                        ExpectedConditions.elementToBeClickable(
+                                notesDeleteButton
+                        )
                 );
 
-        for (WebElement note : notes) {
+        js.executeScript(
+                "arguments[0].scrollIntoView({block:'center'});",
+                deleteNote
+        );
 
-            String actualTitle =
-                    note.findElement(
-                            By.xpath(".//div[@data-testid='note-card-title']")
-                    ).getText().trim();
+        js.executeScript(
+                "arguments[0].click();",
+                deleteNote
+        );
 
-            if (actualTitle.equalsIgnoreCase(deletedTitle)) {
 
-                WebElement deleteBtn =
-                        note.findElement(
-                                By.xpath(".//button[@data-testid='note-delete']")
-                        );
-
-                js.executeScript(
-                        "arguments[0].scrollIntoView({block:'center'});",
-                        deleteBtn
-                );
-
-                js.executeScript(
-                        "arguments[0].click();",
-                        deleteBtn
-                );
-
-                break;
-            }
-        }
-
-        WebElement confirmDelete =
+        WebElement delete =
                 wait.until(
                         ExpectedConditions.elementToBeClickable(
                                 deleteButton
@@ -188,8 +169,21 @@ public class NotesDeletePage {
                 );
 
         js.executeScript(
+                "arguments[0].scrollIntoView({block:'center'});",
+                delete
+        );
+
+        js.executeScript(
                 "arguments[0].click();",
-                confirmDelete
+                delete
+        );
+
+        closeAdIfPresent();
+
+        wait.until(
+                ExpectedConditions.invisibilityOfElementLocated(
+                        title
+                )
         );
     }
 
@@ -219,22 +213,13 @@ public class NotesDeletePage {
 
         closeAdIfPresent();
 
-        List<WebElement> noteTitles =
-                driver.findElements(
-                        By.xpath("//div[@data-testid='note-card-title']")
+        By deletedNote =
+                By.xpath(
+                        "//div[@data-testid='note-card-title' and contains(text(),'"
+                                + deletedTitle +
+                                "')]"
                 );
 
-        for (WebElement title : noteTitles) {
-
-            String actualTitle =
-                    title.getText().trim();
-
-            if (actualTitle.equalsIgnoreCase(deletedTitle)) {
-
-                return false;
-            }
-        }
-
-        return true;
+        return driver.findElements(deletedNote).isEmpty();
     }
 }
