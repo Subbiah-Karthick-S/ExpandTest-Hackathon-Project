@@ -19,7 +19,7 @@ jobs:
       - run: mvn test
 
       - name: Send HTML Report Mail
-        #if: always() used to allow failed test cases to uploaded in github and send report
+        if: always() #used to allow failed test cases to uploaded in github and send report
         uses: dawidd6/action-send-mail@v3
         with:
           server_address: smtp.gmail.com
