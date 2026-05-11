@@ -34,17 +34,40 @@ public class LoginPage {
 
     }
 
+    public void closeAdIfPresent() {
+
+        try {
+
+            js.executeScript(
+                    "document.querySelectorAll('iframe').forEach(el => el.remove());"
+            );
+
+        } catch (Exception e) {
+
+            System.out.println("No Ad Popup Found");
+        }
+    }
+
     public void login() {
 
+        closeAdIfPresent();
+
         WebElement loginElement =
-                wait.until(ExpectedConditions.visibilityOfElementLocated(logButton));
+                wait.until(
+                        ExpectedConditions.elementToBeClickable(
+                                loginButton
+                        )
+                );
 
         js.executeScript(
-                "arguments[0].scrollIntoView({block: 'center'});",
+                "arguments[0].scrollIntoView({block:'center'});",
                 loginElement
         );
 
-        loginElement.click();
+        js.executeScript(
+                "arguments[0].click();",
+                loginElement
+        );
     }
 
     public void fillDetails(String username,
