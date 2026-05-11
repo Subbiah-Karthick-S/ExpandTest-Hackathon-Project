@@ -5,6 +5,8 @@ import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
+import java.util.Date;
+
 public class ExpandTest extends BaseTest {
 
     @DataProvider
@@ -71,6 +73,31 @@ public class ExpandTest extends BaseTest {
                         "subbiahkarthickcse@gmail.com",
                         "123456",
                         "Personal"
+                }
+        };
+    }
+
+    @DataProvider
+    public Object[][] inputPracticeData() {
+
+        return new Object[][]{
+                {
+                        123456,
+                        "Subbiah Karthick",
+                        "SK@123456",
+                        "11/02/2004"
+                }
+        };
+    }
+
+    @DataProvider
+    public Object[][] dropDownData() {
+
+        return new Object[][]{
+                {
+                        "Option 2",
+                        "20",
+                        "India"
                 }
         };
     }
@@ -237,4 +264,130 @@ public class ExpandTest extends BaseTest {
                 "Filtered notes do not belong to category: " + category
         );
     }
+
+    @Test(priority = 7, dataProvider = "inputPracticeData")
+    public void InputPracticeTest(int number,
+                                  String text,
+                                  String password,
+                                  String date) {
+
+        InputPracticePage inputPracticePage =
+                new InputPracticePage(driver, wait, js);
+
+        navigateTo();
+
+        adBlockers();
+
+        boolean inputsVerified =
+                inputPracticePage.inputLoginUser(
+                        number,
+                        text,
+                        password,
+                        date
+                );
+
+        Assert.assertTrue(
+                inputsVerified,
+                "Input values were not displayed correctly"
+        );
+    }
+
+    @Test(priority = 8, dataProvider = "dropDownData")
+    public void dropDownTest(String simpleOption,
+                             String elementsPerPage,
+                             String country) {
+
+        DropDownPage dropDownPage =
+                new DropDownPage(driver, wait, js);
+
+        navigateTo();
+
+        adBlockers();
+
+        boolean isVerified =
+                dropDownPage.dropDownUser(
+                        simpleOption,
+                        elementsPerPage,
+                        country
+                );
+
+        Assert.assertTrue(
+                isVerified,
+                "Dropdown values are not selected correctly"
+        );
+    }
+
+    @DataProvider
+    public Object[][] checkBoxData() {
+
+        return new Object[][]{
+                {
+                        true,
+                        false
+                }
+        };
+    }
+
+    @Test(priority = 9, dataProvider = "checkBoxData")
+    public void checkBoxTest(boolean checkbox1State,
+                             boolean checkbox2State) {
+
+        CheckBoxPage checkBoxPage =
+                new CheckBoxPage(driver, wait, js);
+
+        navigateTo();
+
+        adBlockers();
+
+        boolean isVerified =
+                checkBoxPage.checkBoxUser(
+                        checkbox1State,
+                        checkbox2State
+                );
+
+        Assert.assertTrue(
+                isVerified,
+                "Checkbox states are incorrect"
+        );
+    }
+
+    @DataProvider
+    public Object[][] radioButtonData() {
+
+        return new Object[][]{
+                {
+                        "red",
+                        "football"
+                },
+                {
+                        "blue",
+                        "basketball"
+                }
+        };
+    }
+
+    @Test(priority = 10, dataProvider = "radioButtonData")
+    public void radioButtonTest(String color,
+                                String sport) {
+
+        RadioButtonPage radioButtonPage =
+                new RadioButtonPage(driver, wait, js);
+
+        navigateTo();
+
+        adBlockers();
+
+        boolean isVerified =
+                radioButtonPage.radioButtonUser(
+                        color,
+                        sport
+                );
+
+        Assert.assertTrue(
+                isVerified,
+                "Radio button selection verification failed"
+        );
+    }
+
+
 }
