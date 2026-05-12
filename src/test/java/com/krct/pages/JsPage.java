@@ -15,19 +15,15 @@ public class JsPage {
     private WebDriverWait wait;
     private JavascriptExecutor js;
 
-    // Navigation button
     private final By jsAlertlogButton =
             By.xpath("//a[@type='button' and @href='/js-dialogs']");
 
-    // JS Alert button
     private final By jsAlertButton =
             By.xpath("//button[@id='js-alert']");
 
-    // JS Confirm button
     private final By jsConfirmButton =
             By.xpath("//button[@id='js-confirm']");
 
-    // Result text
     private final By flash =
             By.xpath("//p[@id='dialog-response']");
 
@@ -45,7 +41,6 @@ public class JsPage {
         this.js = js;
     }
 
-    // ================= COMMON NAVIGATION =================
 
     public void jsAlertLogin() {
 
@@ -60,7 +55,6 @@ public class JsPage {
         js.executeScript("arguments[0].click();", loginElement);
     }
 
-    // ================= JS ALERT =================
 
     public String jsAlertUser() {
 
@@ -91,8 +85,6 @@ public class JsPage {
         return text;
     }
 
-    // ================= JS CONFIRM =================
-
     public String jsConfirmUser(String option) {
 
         jsAlertLogin();
@@ -115,7 +107,6 @@ public class JsPage {
         Alert alert =
                 wait.until(ExpectedConditions.alertIsPresent());
 
-        // Handle OK / Cancel
         if (option.equalsIgnoreCase("Ok")) {
 
             alert.accept();
