@@ -264,4 +264,23 @@ public class ExpandTest extends BaseTest {
         String text = jsPage.jsPromptUser("Subbiah Karthick");
         Assert.assertEquals(text,"Subbiah Karthick");
     }
+
+    @Test(priority = 14)
+    public void notesCreationFormTest() {
+
+        NotesCreationFormValidation notesPage =
+                new NotesCreationFormValidation(driver, wait, js);
+
+        navigateTo();
+
+        adBlockers();
+
+        String text = notesPage.NoteLoginUser(
+                "subbiahkarthickcse@gmail.com",
+                "123456",
+                "Subbiah Karthick from HclTech"
+        );
+
+        Assert.assertEquals(text, "Title is required");
+    }
 }
