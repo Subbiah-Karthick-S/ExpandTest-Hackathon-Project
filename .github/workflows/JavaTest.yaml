@@ -34,8 +34,5 @@ jobs:
 
           to: subbiahkarthick2004@gmail.com
           from: Github Actions
-
-          #html_body: file://target/surefire-reports/emailable-report.html
-
           html_body: file://reports/report.html
 
