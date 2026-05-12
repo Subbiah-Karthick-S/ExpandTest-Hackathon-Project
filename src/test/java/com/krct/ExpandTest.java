@@ -24,6 +24,11 @@ public class ExpandTest extends BaseTest {
         navigateTo();
         adBlockers();
         String txt = loginPage.LoginUser(username, password);
+
+        if(flash.contains("invalid")){
+            ScreenshotUtil.capture(driver, flash);
+        }
+
         Assert.assertEquals(txt, flash);
     }
 

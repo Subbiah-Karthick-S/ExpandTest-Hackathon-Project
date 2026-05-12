@@ -63,7 +63,7 @@ public class NotesDeletePage {
 
         loginBtn();
 
-        notesDelete();
+        notesDelete(deletedTitle);
 
         return notesVerify(deletedTitle);
     }
@@ -141,7 +141,12 @@ public class NotesDeletePage {
         );
     }
 
-    public void notesDelete() {
+    public void notesDelete(String deletedTitle) {
+
+        By deletedNoteTitle = By.xpath(
+                "//div[@data-testid='note-card-title' and contains(text(),'"
+                        + deletedTitle + "')]"
+        );
 
         WebElement deleteNote =
                 wait.until(
@@ -159,7 +164,6 @@ public class NotesDeletePage {
                 "arguments[0].click();",
                 deleteNote
         );
-
 
         WebElement delete =
                 wait.until(
@@ -182,7 +186,7 @@ public class NotesDeletePage {
 
         wait.until(
                 ExpectedConditions.invisibilityOfElementLocated(
-                        title
+                        deletedNoteTitle
                 )
         );
     }
@@ -211,8 +215,6 @@ public class NotesDeletePage {
 
     public boolean notesVerify(String deletedTitle) {
 
-        closeAdIfPresent();
-
         By deletedNote =
                 By.xpath(
                         "//div[@data-testid='note-card-title' and contains(text(),'"
@@ -220,6 +222,8 @@ public class NotesDeletePage {
                                 "')]"
                 );
 
-        return driver.findElements(deletedNote).isEmpty();
+        return wait.until(driver ->
+                driver.findElements(deletedNote).isEmpty()
+        );
     }
 }
