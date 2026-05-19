@@ -13,43 +13,43 @@ import java.util.Date;
 
 public class ExpandTest extends BaseTest {
 
-//    @DataProvider
-//    public Object[][] userData() {
-//        return new Object[][]{
-//                {"practice", "SuperSecretPassword!", "You logged into a secure area!"},
-//                {"practice", "SecretPassword!", "Your password is invalid!"},
-//                {"", "", "Your username is invalid!"}
-//        };
-//    }
-//
-//    @Test(priority = 1, dataProvider = "userData")
-//    public void LoginTest(String username, String password, String flash) {
-//        LoginPage loginPage = new LoginPage(driver, wait, js);
-//        navigateTo();
-//        adBlockers();
-//        String txt = loginPage.LoginUser(username, password);
-//        if(flash.contains("invalid")){
-//            ScreenshotUtil.capture(driver, flash);
-//        }
-//        Assert.assertEquals(txt, flash);
-//    }
-//
-//    @DataProvider
-//    public Object[][] logOutData() {
-//        return new Object[][]{
-//                {"practice", "SuperSecretPassword!"}
-//        };
-//    }
-//
-//    @Test(priority = 2, dataProvider = "logOutData")
-//    public void logoutTest(String username, String password) {
-//        LogoutPage logoutPage = new LogoutPage(driver, wait, js);
-//        navigateTo();
-//        adBlockers();
-//        String txt = logoutPage.logoutUser(username, password);
-//        Assert.assertEquals(txt, "You logged out of the secure area!");
-//        Assert.assertEquals(driver.getCurrentUrl(), "https://practice.expandtesting.com/login");
-//    }
+    @DataProvider
+    public Object[][] userData() {
+        return new Object[][]{
+                {"practice", "SuperSecretPassword!", "You logged into a secure area!"},
+                {"practice", "SecretPassword!", "Your password is invalid!"},
+                {"", "", "Your username is invalid!"}
+        };
+    }
+
+    @Test(priority = 1, dataProvider = "userData")
+    public void LoginTest(String username, String password, String flash) {
+        LoginPage loginPage = new LoginPage(driver, wait, js);
+        navigateTo();
+        adBlockers();
+        String txt = loginPage.LoginUser(username, password);
+        if(flash.contains("invalid")){
+            ScreenshotUtil.capture(driver, flash);
+        }
+        Assert.assertEquals(txt, flash);
+    }
+
+    @DataProvider
+    public Object[][] logOutData() {
+        return new Object[][]{
+                {"practice", "SuperSecretPassword!"}
+        };
+    }
+
+    @Test(priority = 2, dataProvider = "logOutData")
+    public void logoutTest(String username, String password) {
+        LogoutPage logoutPage = new LogoutPage(driver, wait, js);
+        navigateTo();
+        adBlockers();
+        String txt = logoutPage.logoutUser(username, password);
+        Assert.assertEquals(txt, "You logged out of the secure area!");
+        Assert.assertEquals(driver.getCurrentUrl(), "https://practice.expandtesting.com/login");
+    }
 
     @DataProvider
     public Object[][] notesData() {
