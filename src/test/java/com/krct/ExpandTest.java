@@ -283,4 +283,23 @@ public class ExpandTest extends BaseTest {
 
         Assert.assertEquals(text, "Title is required");
     }
+
+    @Test(priority=15)
+    public void registrationFormTest(){
+        RegistrationForm registrationForm = new RegistrationForm(driver, wait, js);
+        navigateTo();
+        adBlockers();
+        String text = registrationForm.RegistrationUser("subbiahkarthick","12");
+        Assert.assertEquals(text, "Password must be at least 4 characters long.");
+    }
+
+    @Test(priority=16)
+    public void invalidEmailLoginTest(){
+        InvalidEmailLogin invalidEmailLogin = new InvalidEmailLogin(driver, wait, js);
+        navigateTo();
+        adBlockers();
+        String text = invalidEmailLogin.LoginUser("subbiah1234karthick","123456");
+        Assert.assertEquals(text, "Email address is invalid");
+
+    }
 }
